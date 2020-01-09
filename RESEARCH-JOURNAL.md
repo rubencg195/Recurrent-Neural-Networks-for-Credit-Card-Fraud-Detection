@@ -1,18 +1,21 @@
 # RESEARCH JOURNAL
-**JAN 7 - Introductions and setup**
+
+**TUE JAN 7 - Introductions and setup**
 
 1. Meeting with the Verafin team.
 2. Learn about how Verafin works.
 3. Tour through the building. 
 4. Setup fingerprints.
 
-**JAN 8 - Background research**
+**WED JAN 8 - Background research**
 
 1. Read the following papers:
   -  Transaction Fraud DetectionUsingGRU-centered Sandwich-structured Model
 
       **Notes:**
       ML models previously used: "Supervised  models  like logistic regression (LR),support vector machine (SVM) and random forest(RF)are  estimated  by  labeled  historical  transaction data. Unsupervised methods like isolation forest (IF) usually identify outliers as potential  fraudulent  cases. Nevertheless, most of these methods treat each transaction as an   independent   individual   and   ignore   the   associations between them." 
+
+  - Credit Card Fraud Detection Using Neural Network
 
 2. Check the following datasets:
   - https://www.kaggle.com/mlg-ulb/creditcardfraud
@@ -21,3 +24,30 @@
   - Synthetic Financial Datasets For Fraud Detection PaySim (https://www.kaggle.com/isaikumar/creditcardfraud)
 3. Create the project's repository. (  https://github.com/rubencg195/mitacs-internship  )
 4. Fingerprints and wifi are now working.
+5. Contact Xurui Li to see if the dataset for the paper "Transaction Fraud Detection Using GRU-centered Sandwich-structured model"
+6. 
+
+**THUR JAN 9 - Background research**
+
+1. Laptops are delivered today.
+2. Create the overleaf/latex project ( https://www.overleaf.com/project/5e1615e61c61b600015b25f1 )
+3. Read the following articles and papers:
+  - LSTM Autoencoder for Anomaly Detection (https://towardsdatascience.com/lstm-autoencoder-for-anomaly-detection-e1f4f2ee7ccf)
+    - **Note:** "One of the advantages of using LSTM cells is the ability to include multivariate features in your analysis. Here, it’s the four sensor readings per time step. However, in an online fraud anomaly detection analysis, it could be features such as the **time of day, dollar amount, item purchased, internet IP per time step**."  
+    - Interesting to reproduce the code of the autoencoder using LSTM and the model loss graphs.
+    - RNNs are unable to look so far to the past and see its context. "In theory, RNNs are absolutely capable of handling such “long-term dependencies.” A human could carefully pick parameters for them to solve toy problems of this form. Sadly, in practice, RNNs don’t seem to be able to learn them. The problem was explored in depth by Hochreiter (1991) [German] and Bengio, et al. (1994), who found some pretty fundamental reasons why it might be difficult. Thankfully, LSTMs don’t have this problem!"
+  - Attention and Augmented Recurrent Neural Networks (https://distill.pub/2016/augmented-rnns/)
+    - https://ieeexplore.ieee.org/abstract/document/8374722
+    - sciencedirect.com/science/article/pii/S0957417418300435
+
+    https://ieeexplore.ieee.org/abstract/document/8594837
+
+    https://towardsdatascience.com/anomaly-detection-with-lstm-in-keras-8d8d7e50ab1b
+
+    https://www.kaggle.com/ventureh/fraud-detection-using-keras-lstm-rnn
+
+    https://www.researchgate.net/publication/226869920_Credit_Card_Transactions_Fraud_Detection_and_Machine_Learning_Modelling_Time_with_LSTM_Recurrent_Neural_Networks
+
+    https://pdfs.semanticscholar.org/5d31/8371549831a05825de6e4eae4461538aeb9b.pdf
+
+    https://medium.com/datadriveninvestor/lstm-neural-networks-for-anomaly-detection-4328cb9b6e27
