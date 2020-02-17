@@ -29,7 +29,7 @@
 
 **THUR JAN 9 - Background research**
 
-1. Laptops are delivered today.
+1. Laptops are delivered today. Setup equipment and dependencies.
 2. Create the overleaf/latex project ( https://www.overleaf.com/project/5e1615e61c61b600015b25f1 )
 3. Read the following articles and papers:
   - LSTM Autoencoder for Anomaly Detection (https://towardsdatascience.com/lstm-autoencoder-for-anomaly-detection-e1f4f2ee7ccf)
@@ -37,17 +37,47 @@
     - Interesting to reproduce the code of the autoencoder using LSTM and the model loss graphs.
     - RNNs are unable to look so far to the past and see its context. "In theory, RNNs are absolutely capable of handling such “long-term dependencies.” A human could carefully pick parameters for them to solve toy problems of this form. Sadly, in practice, RNNs don’t seem to be able to learn them. The problem was explored in depth by Hochreiter (1991) [German] and Bengio, et al. (1994), who found some pretty fundamental reasons why it might be difficult. Thankfully, LSTMs don’t have this problem!"
   - Attention and Augmented Recurrent Neural Networks (https://distill.pub/2016/augmented-rnns/)
-    - https://ieeexplore.ieee.org/abstract/document/8374722
-    - sciencedirect.com/science/article/pii/S0957417418300435
+    - Notes: RNN Variations: Neural Turing Machine, Attentional Interfaces, Adaptive Computation Time, Neural Programmers.
+  
+  - Deep learning detecting fraud in credit card transactions (https://ieeexplore.ieee.org/abstract/document/8374722)
+  
+  - Sequence classification for credit-card fraud detection (sciencedirect.com/science/article/pii/S0957417418300435)
 
-    https://ieeexplore.ieee.org/abstract/document/8594837
+  -  Learning Sequential Behavior Representations for Fraud Detection (https://ieeexplore.ieee.org/abstract/document/8594837)
 
-    https://towardsdatascience.com/anomaly-detection-with-lstm-in-keras-8d8d7e50ab1b
+  - Anomaly Detection With LSTM in Keras (https://towardsdatascience.com/anomaly-detection-with-lstm-in-keras-8d8d7e50ab1b)
 
-    https://www.kaggle.com/ventureh/fraud-detection-using-keras-lstm-rnn
+  - Fraud Detection Using Keras LSTM RNN (https://www.kaggle.com/ventureh/fraud-detection-using-keras-lstm-rnn)
 
     https://www.researchgate.net/publication/226869920_Credit_Card_Transactions_Fraud_Detection_and_Machine_Learning_Modelling_Time_with_LSTM_Recurrent_Neural_Networks
 
     https://pdfs.semanticscholar.org/5d31/8371549831a05825de6e4eae4461538aeb9b.pdf
 
     https://medium.com/datadriveninvestor/lstm-neural-networks-for-anomaly-detection-4328cb9b6e27
+
+**MON JAN 13 - Background Research**
+
+1. Read the following papers:
+   1.  A Comprehensive Survey of Fraud Detection Techniques https://pdfs.semanticscholar.org/fab2/6fec026bdc2959e78d55a5a10ce245f36e86.pdf)
+       1.   Note: Models to analyze and categorize events as fraud
+            1.   Statistical Based (Univariate, Multivariate, Time series model)
+            2.   Knowledge Based (FSM-Finite State Machine, Description Language (N-grams, UML, LOTOS), Expert Systems-Rule Based Systems )
+            3.   Machine Learning (Bayesian Networks, Markov models, Neural Networks, Fuzzy Logic, Genetic Algorithms.)
+2. Work on the latex layout and topic distribution.
+3. Start writing the Introduction Chapter.
+
+**TUE JAN 14 - Background Research**
+1. Read the following papers:
+   1.  Automatic Bank Fraud Detection Using Support Vector Machines (http://d.researchbib.com/f/4nZGHlBGthpTEz.pdf)
+   2.  Continue working on the introduction section, Fraud types.
+
+
+# BIG SNOW STORM
+
+**MON JAN 27 - Background Research**
+1. Create Base Model
+2. Finish Visualization
+3. Start Pre-processing and generating new features from categorical data such as Id's
+4. Create LSTM Model
+5. Define extra features to obtain from client id and merchant id relationships
+   1. 
