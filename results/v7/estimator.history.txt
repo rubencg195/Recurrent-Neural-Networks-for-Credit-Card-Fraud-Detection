@@ -1,1 +1,0 @@
-<tensorflow.python.keras.wrappers.scikit_learn.KerasClassifier object at 0x7ff3904699b0>
