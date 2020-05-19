@@ -307,6 +307,163 @@ def generateNewFeatures(data):
     return new_data
 
 
+def separatePaySimInBatches(customer_batches, min_batch_size=15, generate_grouped_batches=False):
+    #print(customer_batches.shape)
+    #min_batch_size = np.min([ pd.DataFrame(cb)[ pd.DataFrame(cb)[0] != -1 ].shape[0] for cb in customer_batches ])
+    #max_batch_size = np.max([ pd.DataFrame(cb)[ pd.DataFrame(cb)[0] != -1 ].shape[0] for cb in customer_batches ])
+    #print("MIN ", min_batch_size, " MAX ", max_batch_size)
+    #padding_value = 0 
+    padding_value                = empty_padding_value
+    column_to_check              = 0
+    # new_customer_batches         = list()
+    # new_labels                   = list()
+    # new_customer_batches         = np.array([]).reshape((-1, 25, 12))
+    data_batches  = customer_batches[:, :, :-1]
+    label_batches = customer_batches[:, :, -1]
+    
+    new_customer_batches         = np.full(data_batches.shape[0] * data_batches.shape[1] , np.nan, dtype=object )
+    new_labels                   = np.full(data_batches.shape[0] * data_batches.shape[1] , np.nan, dtype=object )
+    new_grouped_customer_batches = list()
+    new_grouped_customer_labels  = list()
+    columns=[
+        "day", "age", "gender", "merchant", "category", "amount", 
+        "curr_day_tr_n","ave_tr_p_day_amount", "tot_ave_tr_amount", "is_mer_new","com_tr_type", "com_mer",
+#         "fraud"
+    ]  
+    print("\n\n{} {} {}\n\n".format( 10*"_ " , "SEPARATING IN BATCHES OF "+str(min_batch_size) , 10*"_ "))
+    print("""
+    In the following procedure, the batches separaeted by customer and
+    generated in the previous function are iterated. Each transaction
+    that has been padded with value of '{}' will be deleted. new batches
+    of size '{}' will be generated using sliding window through each 
+    transaction in every customer batch. Padding will be added for batches 
+    with less transactions than the min amount '{}'.
+    Input Shape:                 {}
+    Data Shape:                  {}
+    Label Len:                   {}
+    Padding Value:               {}
+    Column to check for 
+    padding values to delete     {}
+    transaction in the new batch
+    """.format(
+        padding_value, min_batch_size, min_batch_size,
+        customer_batches.shape, data_batches.shape, label_batches.shape,
+        padding_value , column_to_check ))
+    
+    bar           = progressbar.ProgressBar(max_value=len(customer_batches))
+    cb_count = 0
+    skipped_rows = 0
+    for cb_i, cb in enumerate(data_batches):
+        cb_df = pd.DataFrame(cb)
+#         cb_df = cb_df[cb_df[column_to_check] != padding_value ]
+        # grouped_customer_batches = list()
+        # grouped_customer_labels = list()
+        # grouped_customer_batches = np.empty( len(cb_df), dtype=object )
+        # grouped_customer_labels  = np.empty( len(cb_df), dtype=int )
+        for i, trans in enumerate(cb_df.values):
+            label      =  label_batches[cb_i, i]
+#             print("{}. Transactions Shape \n\n{}\n\n labels shape {}".format( i, trans, label ))
+            if(label == -1):
+                skipped_rows +=1
+                continue
+            init_index           = 0 if i+1 <= min_batch_size else i+1 - min_batch_size
+            trans_before_current = cb_df[ init_index:i+1 ]
+            n_features           = cb_df.shape[1]
+            empty_rows_to_add    = 0 if min_batch_size <= len(trans_before_current) else min_batch_size - len(trans_before_current)
+            z = np.full( ( empty_rows_to_add , n_features ), padding_value )
+            # new_batch = pd.DataFrame( np.r_[ z, trans_before_current.values ] )
+            #print(i, " trans before ", len(trans_before_current)," empty_rows_to_add ", empty_rows_to_add, " original shape ", cb_df.shape, " new shape ",new_batch.shape )
+            #print(new_batch.tail() ,  "\n____________" )
+            # new_batch = np.array(new_batch.values)
+            # new_customer_batches.append( new_batch )
+            
+            # new_customer_batches.append( np.r_[ z, trans_before_current.values ]  )
+            batch =  np.r_[ z, trans_before_current.values ]  
+            # print(new_customer_batches.shape, batch.shape, label)
+            
+            # new_customer_batches = np.vstack(( new_customer_batches , [batch] ) )
+            # new_labels = np.append(new_labels, label )
+            
+            new_customer_batches[ (data_batches.shape[1] * cb_i) + i ] = batch
+            new_labels[ (data_batches.shape[1] * cb_i) + i ]           = label
+            
+            # new_customer_batches[i] =  np.r_[ z, trans_before_current.values ] 
+            # new_labels[i]            =  label
+            
+            # grouped_customer_batches.append(new_batch  )
+            # grouped_customer_labels.append(label)
+#         break
+        # new_grouped_customer_batches.append( np.array(grouped_customer_batches ) )
+        # new_grouped_customer_labels.append(  np.array(grouped_customer_labels  ) )
+        #print(cb_df.shape, "\n", cb_df.tail(), "\n____________" )
+        #break
+        cb_count += 1
+        bar.update(cb_count)
+    # new_customer_batches         = np.array(new_customer_batches)
+    # new_labels                   = np.array(new_labels)
+    # new_grouped_customer_batches = np.array( new_grouped_customer_batches)
+    # new_grouped_customer_labels  = np.array( new_grouped_customer_labels)    
+    
+    X         = new_customer_batches 
+    y         = new_labels 
+    # grouped_X = new_grouped_customer_batches
+    # grouped_y = new_grouped_customer_labels
+    
+    grouped_X, grouped_y = np.array([]), np.array([]) 
+    
+    #REPLACE PADDING WITH 0
+#     X[ X == padding_value ] = 0
+#     y[ y == padding_value ] = 0
+#     grouped_X[ grouped_X == padding_value ] = 0
+#     grouped_y[ grouped_y == padding_value ] = 0
+    
+    # len_per_cust_group    = [len(gc) for gc in grouped_X ]
+    # frauds_per_cust_group = [len(fgc[fgc==1]) for fgc in grouped_y ]
+#     print("""
+#     X Shape: {}
+#     y Shape: {}
+#     X Grouped/Cust Shape: ( {} , ~ MIN:{}|AVE:|{}|MAX:{} , {}  )
+#     y Grouped/Cust Shape: ({}, ~ MIN:{}|AVE:|{}|MAX:{} )
+    
+#     # TRANSACTIONS GROUPS PER CUSTOMER
+#     Min                      : {} 
+#     Max                      : {} 
+#     Ave                      : {}
+#     Total Transaction Groups : {}
+#     # Frauds & %             : {}  - {}%
+#     # Non-Fraud & %          : {}  - {}%
+#     % Frauds per customer    : %
+#     Cust Id with most fraud  : 
+#         ID  :  #-Frauds:  of #Trans  
+#         Note: The id is not the original. It has to be transformed using the label_hash.
+#     Skipped rows due to having all -1: {}
+#     """.format(
+#         X.shape,
+#         y.shape,
+#         len(grouped_X), 
+#         min(len_per_cust_group), np.round(np.average(len_per_cust_group), 2), max(len_per_cust_group), n_features,
+#         len(grouped_y), min(len_per_cust_group), np.round(np.average(len_per_cust_group), 2), max(len_per_cust_group), 
+#         min(len_per_cust_group), 
+#         max(len_per_cust_group), 
+#         np.round(np.average(len_per_cust_group), 2),
+#         len(X),
+#         len(y[y==1]), np.round(len(y[y==1])*100/len(y), 2),
+#         len(y[y==0]), np.round(len(y[y==0])*100/len(y), 2),
+#         # np.round(np.average(frauds_per_cust_group), 2),
+#         # np.argmax(frauds_per_cust_group), 
+#         # frauds_per_cust_group[np.argmax(frauds_per_cust_group)], 
+#         # len(grouped_y[np.argmax(frauds_per_cust_group)]), 
+#         skipped_rows
+#     ))
+    
+#     print("Tail Sample of X \n\n{}\n")
+#     print(pd.DataFrame(X[0], 
+# #                        columns=columns, index=None
+#                       ).tail())
+#     print("Sample of y \n\n{}\n".format( y[0] ))
+    return X, grouped_X, y , grouped_y
+
+
 def separateInBatches(customer_batches, min_batch_size=15):
     #print(customer_batches.shape)
     #min_batch_size = np.min([ pd.DataFrame(cb)[ pd.DataFrame(cb)[0] != -1 ].shape[0] for cb in customer_batches ])
