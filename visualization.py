@@ -392,7 +392,8 @@ def visualize_data(data):
   age_df = pd.DataFrame([ ["'0'", "<=18"], ["'1'", "19-25"], ["'2'", "26-35"], ["'3'", "36-45"], ["'4'", "46-55"], ["'5'", "56-65"], ["'6'", ">65"], ["'U'", "Unknown"], ], columns=["Age", "Label"])
   age_comparison_df = pd.merge(age_comparison_df, age_df, on="Age", how="outer")
   age_comparison_df['Age'] = age_comparison_df['Age'].map(lambda x: x.strip("'"))
-  age_comparison_df = age_comparison_df.sort_index(by=["Age"])
+#   age_comparison_df = age_comparison_df.sort_index(by=["Age"])
+  age_comparison_df = age_comparison_df.sort_values(by=["Age"]) 
   age_comparison_df = age_comparison_df[["Age", "Label", '# of Fraud']]
   print(age_comparison_df)
     

@@ -92,7 +92,7 @@ def normalizing_data(data):
   plt.savefig('FEATURE_IMPORTANCE_normalizing_data.png')
   return labels_hash
 
-def generating3DRNNInput(data):
+def generating3DRNNInput(data, generate_with_max_size=True):
     tmp_df = data[:]
     col_categorical        = tmp_df.select_dtypes(include= ['object']).columns
     for col_name in col_categorical:                         #????
@@ -146,8 +146,8 @@ def generating3DRNNInput(data):
     print("\n\nSCATTER PLOT SHOWING SIZES OF BATCHES GROUPED BY CUSTOMER ID: \n\n" )
     fig=plt.figure()
     ax=fig.add_axes([0,0,1,1])
-    ax.scatter(range(4112), [ customer_batches[i].shape[0] for i in customer_batches] , color='r')
-    ax.plot([0, 4112], [145, 145], "--")
+    ax.scatter(range( len(customer_batches) ), [ customer_batches[i].shape[0] for i in customer_batches] , color='r')
+    ax.plot([0, len(customer_batches)], [145, 145], "--")
     ax.set_xlabel('Batch Index')
     ax.set_ylabel('Batch Size')
     ax.set_title('Customer Batches Sizes')
@@ -161,40 +161,46 @@ def generating3DRNNInput(data):
     plt.show()
     plt.savefig('BOX_PLOT_SHOWING_SIZES_OF_BATCHES_GROUPED_BY_CUSTOMER_ID_generating3DRNNInput.png')
 
-    print("\n\n{} {} {}\n\n".format( 10*"_ " , "GENERATING 3D INPUT WITH BATCHES OF SIZE "+str(max_trans_per_cust) , 10*"_ "))
-    # Full 3D Array as an input for the LSTM
     
-    #     empty_padding_value = -1
     np_customer_batches = list()
     total_empty_rows_added = 0
+    np_customer_batches_3d = np.array([])
     
-    for k in customer_batches:
-        empty_rows_to_add =  max_trans_per_cust - customer_batches[k].shape[0]
-        z = np.full( ( empty_rows_to_add , n_features ), empty_padding_value )
-        np_customer_batches.append( np.r_[ customer_batches[k].values , z] )
-        total_empty_rows_added += empty_rows_to_add
-    np_customer_batches_3d = np.array(np_customer_batches)
-    mean_frauds_per_batch       = np.mean( [ len(b[-1][b[-1] == 1 ]) for b in np_customer_batches_3d ]  )  
-    percentage_frauds_per_batch = np.mean( [ len(b[-1][b[-1] == 1 ]) / max_trans_per_cust for b in np_customer_batches_3d ]  )  * 100
-    print(
-      """
-      The batches are separated by customer id. To be able to use the batches as input for the RNN, 
-      it needs to have a static size. That is why the batch size is defined by the max number of 
-      transactions done by the customers ({}). If one of the customers have done less transactions,
-      the rest of the empty space is filled with {} values. The final array size is {}.\n\n""".format(max_trans_per_cust, empty_padding_value, np_customer_batches_3d.shape ),
-      "\nTotal Empty Rows Added: ", total_empty_rows_added, 
-      "\nPercentage of Empty Rows Added Compared to Total # of Data Points: %", np.round(total_empty_rows_added / (max_trans_per_cust * len(np_customer_batches) ) * 100 , 2), 
-      "\nNew Shape: ", np_customer_batches_3d.shape,
-      "\nMean of frauds per batch: ", np.round(mean_frauds_per_batch, 5),
-      "\nPercentage of frauds per batch: ", np.round(percentage_frauds_per_batch, 5),
-    )
+    if generate_with_max_size:
+        print("\n\n{} {} {}\n\n".format( 10*"_ " , "GENERATING 3D INPUT WITH BATCHES OF SIZE "+str(max_trans_per_cust) , 10*"_ "))
+        # Full 3D Array as an input for the LSTM
+        #     empty_padding_value = -1
+        bar = progressbar.ProgressBar(max_value=len(customer_batches))
+        for k_i,  k in enumerate(customer_batches):
+        # for k in customer_batches:
+            empty_rows_to_add =  max_trans_per_cust - customer_batches[k].shape[0]
+            z = np.full( ( empty_rows_to_add , n_features ), empty_padding_value )
+            np_customer_batches.append( np.r_[ customer_batches[k].values , z] )
+            total_empty_rows_added += empty_rows_to_add
+            bar.update(k_i+1)
+        np_customer_batches_3d = np.array(np_customer_batches)
+        mean_frauds_per_batch       = np.mean( [ len(b[-1][b[-1] == 1 ]) for b in np_customer_batches_3d ]  )  
+        percentage_frauds_per_batch = np.mean( [ len(b[-1][b[-1] == 1 ]) / max_trans_per_cust for b in np_customer_batches_3d ]  )  * 100
+        print(
+        """
+        The batches are separated by customer id. To be able to use the batches as input for the RNN, 
+        it needs to have a static size. That is why the batch size is defined by the max number of 
+        transactions done by the customers ({}). If one of the customers have done less transactions,
+        the rest of the empty space is filled with {} values. The final array size is {}.\n\n""".format(max_trans_per_cust, empty_padding_value, np_customer_batches_3d.shape ),
+        "\nTotal Empty Rows Added: ", total_empty_rows_added, 
+        "\nPercentage of Empty Rows Added Compared to Total # of Data Points: %", np.round(total_empty_rows_added / (max_trans_per_cust * len(np_customer_batches) ) * 100 , 2), 
+        "\nNew Shape: ", np_customer_batches_3d.shape,
+        "\nMean of frauds per batch: ", np.round(mean_frauds_per_batch, 5),
+        "\nPercentage of frauds per batch: ", np.round(percentage_frauds_per_batch, 5),
+        )
 
     np_customer_batches = list()
     np_left_over_transactions = np.empty(shape=[0, n_features])
     total_empty_rows_added = 0
     mean_trans_per_cust = math.ceil(mean_trans_per_cust)
     print("\n\n{} {} {}\n\n".format( 10*"_ " , "GENERATING 3D INPUT WITH BATCHES OF SIZE "+str(mean_trans_per_cust) , 10*"_ "))
-    for k in customer_batches:
+    bar = progressbar.ProgressBar(max_value=len(customer_batches))
+    for k_i,  k in enumerate(customer_batches):
         if( mean_trans_per_cust > customer_batches[k].shape[0] ):
             empty_rows_to_add =  mean_trans_per_cust - customer_batches[k].shape[0]
             z = np.full( ( empty_rows_to_add , n_features ) , empty_padding_value )
@@ -203,6 +209,7 @@ def generating3DRNNInput(data):
         else:
             np_customer_batches.append( np.array(customer_batches[k][0:mean_trans_per_cust].values) ) 
             np_left_over_transactions = np.r_[ np_left_over_transactions , customer_batches[k][mean_trans_per_cust:].values ]  #axis 0 to append vertically.
+        bar.update(k_i+1)
     left_over_n_batches = math.ceil( len(np_left_over_transactions) / mean_trans_per_cust )
     left_over_z = np.full( ( (left_over_n_batches * mean_trans_per_cust ) - len(np_left_over_transactions)  , n_features ),  empty_padding_value )
     np_left_over_transactions    = np.r_[ np_left_over_transactions , left_over_z ] 
