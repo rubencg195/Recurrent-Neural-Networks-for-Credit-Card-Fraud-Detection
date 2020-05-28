@@ -15,6 +15,115 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import confusion_matrix, classification_report, roc_curve, auc
 from sklearn.metrics import precision_recall_curve, average_precision_score
 sns.set()
+from sklearn import metrics
+
+import warnings
+warnings.filterwarnings("ignore")
+    
+middle = lambda x, i: np.argwhere(x > i)[-1]
+greater_than = lambda x, i: np.argwhere(x >= i)[0]
+random_values = list()
+
+def plot_pr_curves(pr_rc_data, fig_path):
+    line_styles  = ['-', '--', '-.', '-', '--', '-.', '--', '-.', '-', "--", "-.", '-.', '-', '-', '-.', '-', '--', '-.', '-', '--', '-.', '--', '-.',  '-', "--", "-.", '-.', '-', '-', '-.']
+    colors = ["blue", "green", "orange","cyan", "green",  "blue", "magenta", "green","orange","cyan","orange","cyan", "green", "magenta", "blue", "green", "orange","cyan", "green",  "blue", "magenta", "green","orange","cyan","orange","cyan", "green", "magenta" ]
+    an_y_point = np.arange( 0.1 , 1.1, 1/len(pr_rc_data) )
+    fig = plt.figure(figsize=(20,10))
+    
+    pr_rc_data = np.array(pr_rc_data)
+    recall_middle_vals = list()
+    for index, pr_rc_values in enumerate(pr_rc_data):
+        y, y_pr, label = pr_rc_values
+        average_precision = metrics.average_precision_score(y, y_pr)
+        recall_middle_vals.append(average_precision)
+    
+    recall_middle_indexes = np.argsort(recall_middle_vals)
+    pr_rc_data = pr_rc_data[recall_middle_indexes]
+        
+    for index, pr_rc_values in enumerate(pr_rc_data):
+        y, y_pr, label = pr_rc_values
+        precision, recall, thresholds = metrics.precision_recall_curve(y, y_pr)
+        average_precision = np.round( metrics.average_precision_score(y, y_pr) , 2)
+        pr_auc = np.round( metrics.auc(recall, precision), 2)
+        plt.plot(recall, precision, linestyle=line_styles[index],linewidth=5, color=colors[index], label = '{}-Ave-PRE={:0.2f}'.format(label, average_precision))
+#         plt.legend(loc = 'lower right')
+        tn, fp, fn, tp = confusion_matrix(y, y_pr.round()).ravel()
+        random_line = tp/(tp+tn) 
+        random_values.append(random_line)
+#         plt.plot([0,1], [random_line, random_line], "r--" ) #, label=label+"_RANDOM"
+        mid_index = middle(recall, 0.8) 
+        plt.annotate(
+            "{} ({})".format(label, average_precision), 
+            xy=(
+                recall[mid_index], precision[mid_index]
+            ),
+            xytext=( 1.07,  an_y_point[index] ) ,
+            horizontalalignment="center",
+            arrowprops=dict(arrowstyle='->',lw=2),
+            fontsize="x-large",
+            fontweight="bold",
+            color=colors[index]
+        )
+        plt.ylim([0.0, 1.05])
+        plt.xlim([0.0, 1.0])
+        plt.xlabel('Recall')
+        plt.ylabel('Precision')
+        plt.draw()
+    plt.title('PR CURVE')
+    print("RANDOM: ", np.mean(random_values).round(3) )
+    plt.plot([0,1], [np.mean(random_values), np.mean(random_values)], "r--" ) #, label=label+"_RANDOM"
+#     plt.legend(bbox_to_anchor=(1.1, 1.05))
+    plt.show()
+    plt.savefig(fig_path)
+    
+
+def plot_roc_curves(pr_rc_data):
+    line_styles = ['-', '--', '-.', '-', '--', '-.', '--', '-.',  '-', "--", "-.", '-.', '-', '-', '-.', '-', '--', '-.', '-', '--', '-.', '--', '-.',  '-', "--", "-.", '-.', '-', '-', '-.']
+    colors = ["blue", "green", "orange","cyan", "green",  "blue", "magenta", "green","orange","cyan","orange","cyan", "green", "magenta", "blue", "green", "orange","cyan", "green",  "blue", "magenta", "green","orange","cyan","orange","cyan", "green", "magenta" ]
+    an_y_point = np.arange( 0.1 , 1.1, 1/len(pr_rc_data) )
+    fig = plt.figure(figsize=(20,10))
+    
+    pr_rc_data = np.array(pr_rc_data)
+    auc_middle_vals = list()
+    for index, pr_rc_values in enumerate(pr_rc_data):
+        y, y_pr, label = pr_rc_values
+        roc_auc = metrics.roc_auc_score(y, y_pr)
+        auc_middle_vals.append(roc_auc)
+    
+    auc_middle_indexes = np.argsort(auc_middle_vals)
+    pr_rc_data = pr_rc_data[auc_middle_indexes]
+        
+    for index, pr_rc_values in enumerate(pr_rc_data):
+        y, y_pr, label = pr_rc_values
+        fpr, tpr, thresholds = metrics.roc_curve(y, y_pr)
+        roc_auc = np.round( metrics.roc_auc_score(y, y_pr), 2)
+        plt.title('ROC CURVE')
+        plt.plot(fpr, tpr, linestyle=line_styles[index],linewidth=5, color=colors[index], label = '{}-AUC={:0.2f}'.format(label, roc_auc))
+#         plt.legend(loc = 'lower right')
+        tn, fp, fn, tp = confusion_matrix(y, y_pr.round()).ravel()
+        random_line = tp/(tp+tn) 
+        mid_index = greater_than(tpr, 0.9) 
+        plt.annotate(
+            "{} ({})".format(label, roc_auc), 
+            xy=(
+                fpr[mid_index], tpr[mid_index]
+            ),
+            xytext=( -0.2,  an_y_point[index] ) ,
+            horizontalalignment="center",
+            arrowprops=dict(arrowstyle='->',lw=2),
+            fontsize="x-large",
+            fontweight="bold",
+            color=colors[index]
+        )
+        plt.ylim([0.0, 1.05])
+        plt.xlim([0.0, 1.0])
+        plt.xlabel('FPR')
+        plt.ylabel('TPR')
+        plt.draw()
+#     plt.legend(bbox_to_anchor=(0, 1.05), fontsize="x-large")
+    plt.plot([0,1], [0, 1], "r--" ) #, label=label+"_RANDOM"
+    plt.show()
+    
 
 def plot_roc_auc(y_test, preds):
     '''
