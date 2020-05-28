@@ -1,3 +1,0 @@
-docker build -t ruben-verafin-internship . --no-cache
-docker images
-docker run --rm -v $(pwd)/DATA:/opt/ml ruben-verafin-internship  train
