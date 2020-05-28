@@ -217,13 +217,34 @@ class RNNModel(MLModel):
         y:      {}
         X_test: {}
         y_test: {}
-        """.format(X.shape, y.shape, X_test.shape, y_test.shape ))
-        self.history = self.model.fit(
-          X, y, 
-          validation_data= (X_test, y_test),
-          class_weight   = class_weights,
-          callbacks      = self.callbacks   
-        )
+        """.format(X.shape, y.shape, 
+                   X_test.shape if X_test != None else None, 
+                   y_test.shape  if X_test != None else None
+        ))
+        self.history = None
+        if( X_test == None ):
+            print("TRAINING WITH ONLY TRAINING DATA")
+            self.history = self.model.fit(
+              X, y, 
+#               validation_data= (X_test, y_test),
+              class_weight   = class_weights,
+              callbacks      = self.callbacks ,
+#               steps_per_epoch= X.shape[0],
+#               epochs = 10,
+#               validation_data=val_data_gen,
+#               validation_steps=total_val
+            )
+        else:
+            print("TRAINING WITH TEST & TRAINING DATA")
+            self.history = self.model.fit(
+              X, y, 
+              validation_data= (X_test, y_test),
+#               steps_per_epoch= X.shape[0],
+#             validation_steps=X_test.shape[0]
+              class_weight   = class_weights,
+              callbacks      = self.callbacks   ,
+#               epochs = 10,
+            )
         print("\n\n{} {} {}\n\n".format( 10*"_ " , "RNN TRAINING RESULTS" , 10*"_ "))
         print("""
           BEST ESTIMATOR:          {} 
