@@ -27,7 +27,7 @@ ____
 ____
 **ORIGINAL DATA:**  /data/paysim\*.csv
 
-**PROCESSED DATA: **
+**PROCESSED DATA:**
 
 *  (The data exceeds GitHub's size limits. These files were not included.) 
 
