@@ -96,4 +96,4 @@ ____
 
 # RESEARCH PAPER
 
-<p>Read it: <a href="https://github.com/rubencg195/Recurrent-Neural-Networks-for-Credit-Card-Fraud-Detection/blob/master/mitacs/RUBEN_CHEVEZ_VERAFIN_MITACS_PAPER_V3.pdf">HERE</a>.</p>
+<p>Available <a href="https://github.com/rubencg195/Recurrent-Neural-Networks-for-Credit-Card-Fraud-Detection/blob/master/mitacs/RUBEN_CHEVEZ_VERAFIN_MITACS_PAPER_V3.pdf">HERE</a>.</p>
