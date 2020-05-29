@@ -41,6 +41,8 @@ ____
 	
 		* The only parameter modified was "nbSteps" which was increased from 720 to 1440
 		
+		* The parameters file used during the study is available in [data/paysim/PaySim.properties](data/paysim/PaySim.properties)
+		
 **MODELS:** /models/paysim/\*.h5
 
 **VALIDATION MODELS:** /models/paysim\/*.model
