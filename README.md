@@ -97,3 +97,16 @@ ____
 # RESEARCH PAPER
 
 <p>Available <a href="https://github.com/rubencg195/Recurrent-Neural-Networks-for-Credit-Card-Fraud-Detection/blob/master/mitacs/RUBEN_CHEVEZ_VERAFIN_MITACS_PAPER_V3.pdf">HERE</a>.</p>
+
+# BANKSIM RESULTS
+
+![BANKSIM](images/pr_curve.png)
+![BANKSIM](images/roc_curve.png)
+
+# PAYSIM RESULTS
+![PAYSIM](images/paysim_pr_roc.png)
+
+
+# REFERENCES
+
+<p>All the references are available in the research paper <a href="https://github.com/rubencg195/Recurrent-Neural-Networks-for-Credit-Card-Fraud-Detection/blob/master/mitacs/RUBEN_CHEVEZ_VERAFIN_MITACS_PAPER_V3.pdf">HERE</a>.</p>
