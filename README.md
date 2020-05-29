@@ -92,3 +92,8 @@ ____
 3. **models:** Contains all generated BankSim & PaySim models.
 
 4. **testing:** A set of python files used as a playing environment to test different combinations that later were introduced to the main python files.
+
+
+# RESEARCH PAPER
+
+<p>Read it: <a href="https://github.com/rubencg195/Recurrent-Neural-Networks-for-Credit-Card-Fraud-Detection/blob/master/mitacs/RUBEN_CHEVEZ_VERAFIN_MITACS_PAPER_V3.pdf">HERE</a>.</p>
